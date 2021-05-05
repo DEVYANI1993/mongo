@@ -1,15 +1,6 @@
 var db = db.getSiblingDB('config');
 var arr= [];
 var arr3 = [];
-print("================================Databases and their primary shards===========================");
-print("============Database================","============Primary Shards=====================","========================partitioned=================")
-var primaryshards = db.getCollection('databases').find({},{_id:true,primary:true,partitioned:true}).toArray();
-for(var k=0 ; k< primaryshards.length;k++)
-{
-arr3.push([primaryshards[k]._id,primaryshards[k].primary,primaryshards[k].partitioned]);
-print(arr3[k][0],arr3[k][1],arr3[k][2]);
-}
-var configcollections = db.getCollection('collections').find({},{_id:true}).toArray();
 print("=================================sharded collections===============================================");
 print("============Database================","============Collections=====================")
 for(var k=0 ; k< configcollections.length;k++)
@@ -28,10 +19,9 @@ for(var j = 0; j < alldbs.length; j++)
     var db = db.getSiblingDB(alldbs[j]);
     var collections = db.getCollectionNames();
     for(var i = 0; i < collections.length; i++)
-    {
+    { flag =0;
       var name = collections[i];
-      if(name.substr(0, 6) != 'system' || name.substr(0, 6) != 'config' )
-      {
+
       for(var t = 0; t < arr.length; t++)
        {
            if(db == arr[t][0] && name == arr[t][1])
@@ -41,11 +31,13 @@ for(var j = 0; j < alldbs.length; j++)
 
        } if(flag == 0)
          {
- 	  arr2.push([db,name]);
+          arr2.push([db,name]);
           flag = 0
-           print(arr2[i][0],arr2[i][1]);
+         }
+
 }
 }
+for(var k=0 ; k< arr2.length;k++)
+{
+print(arr2[k][0],arr2[k][1]);
 }
-}
-              
