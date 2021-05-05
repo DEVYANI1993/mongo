@@ -1,0 +1,51 @@
+var db = db.getSiblingDB('config');
+var arr= [];
+var arr3 = [];
+print("================================Databases and their primary shards===========================");
+print("============Database================","============Primary Shards=====================","========================partitioned=================")
+var primaryshards = db.getCollection('databases').find({},{_id:true,primary:true,partitioned:true}).toArray();
+for(var k=0 ; k< primaryshards.length;k++)
+{
+arr3.push([primaryshards[k]._id,primaryshards[k].primary,primaryshards[k].partitioned]);
+print(arr3[k][0],arr3[k][1],arr3[k][2]);
+}
+var configcollections = db.getCollection('collections').find({},{_id:true}).toArray();
+print("=================================sharded collections===============================================");
+print("============Database================","============Collections=====================")
+for(var k=0 ; k< configcollections.length;k++)
+{
+arr.push(JSON.stringify (configcollections[k]._id).split("."));
+print(arr[k][0],arr[k][1]);
+}
+print("==================================non sharded collections================================");
+print("============Database================","============Collections=====================")
+
+var arr2= [];
+var flag = 0;
+var alldbs = db.getMongo().getDBNames();
+for(var j = 0; j < alldbs.length; j++)
+{
+    var db = db.getSiblingDB(alldbs[j]);
+    var collections = db.getCollectionNames();
+    for(var i = 0; i < collections.length; i++)
+    {
+      var name = collections[i];
+      if(name.substr(0, 6) != 'system' || name.substr(0, 6) != 'config' )
+      {
+      for(var t = 0; t < arr.length; t++)
+       {
+           if(db == arr[t][0] && name == arr[t][1])
+                {
+                        flag = 1;
+                }
+
+       } if(flag == 0)
+         {
+ 	  arr2.push([db,name]);
+          flag = 0
+           print(arr2[i][0],arr2[i][1]);
+}
+}
+}
+}
+              
